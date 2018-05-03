@@ -145,7 +145,7 @@ placar(S) :- findall(P, pontos(P), Ps), sum_list(Ps, S).
 
 pontos(P) :- passos(T),        P is -T.
 pontos(P) :- jogador_esta(morto), P is -1000.
-pontos(P) :- tem_ouro(yes),   P is +1000.
+pontos(P) :- tem_ouro(sim),   P is +1000.
 
 passos(S) :- findall(A, acoes(A), As), length(As, S).
 
@@ -155,7 +155,7 @@ imprime_resultado :-
   placar(S), passos(T),
   format('Passos: ~`.t ~d~40|', [T]), nl,
   format('Placar: ~`.t ~d~40|', [S]), nl,
-  (tem_ouro(yes), cacador(1, 1, _)) ->
+  (tem_ouro(sim), cacador(1, 1, _)) ->
     format('Resultado: ~`.t ~p~40|', [ganhou]), nl;
     format('Resultado: ~`.t ~p~40|', [perdeu]), nl.
 
@@ -192,9 +192,9 @@ run :- runloop(0).
 runloop(100) :- write('!: Numero maximo de passos executado.'), nl, acao(exit), !.
 runloop(T) :-
   cacador(X, Y, D), percepcoes(P),
-  format('~d: Na posicao ~dx~d virado para ~p, percebeu ~p. ', [T, X, Y, D, P]),
+  format('~d: Na posicao ~dx~d virado para ~p, as percepcoes sao ~p. ', [T, X, Y, D, P]),
   heuristica(P, A),
-  format('Vou fazer ~p.~n', [A]),
+  format('Acao escolhida: ~p.~n', [A]),
   acao(A),
   % Iterate
   jogador_esta(morto) -> (

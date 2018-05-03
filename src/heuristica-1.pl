@@ -43,7 +43,7 @@ agrega_conhecimento(fedor) :- cacador(X, Y, _), assertz(fedor_em(X, Y)).
 agrega_conhecimento(sem_fedor) :- cacador(X, Y, _), assertz(sem_fedor_em(X, Y)).
 
 % ---------------------------- %
-% Define heuristicas            %
+% Define heuristicas           %
 % ---------------------------- %
 
 % [Fedor, Brisa, Brilho, Parede, Grito]
@@ -92,7 +92,7 @@ custo(X, Y, C) :- \+visitado(X, Y), tem_buraco(X, Y, sim), C is 100.
 custo(X, Y, C) :- \+visitado(X, Y), tem_wumpus(X, Y, sim), C is 100.
 custo(X, Y, C) :- \+visitado(X, Y), sente_perigo(sim), tem_buraco(X, Y, talvez), C is 10.
 custo(X, Y, C) :- \+visitado(X, Y), sente_perigo(sim), tem_wumpus(X, Y, talvez), C is 10.
-custo(X, Y, C) :- visitado(X, Y), tem_ouro(sim), C is , !.
+custo(X, Y, C) :- visitado(X, Y), tem_ouro(sim), C is (X - 1)^2+(Y - 1)^2-10, !.
 custo(X, Y, C) :- visitado(X, Y), tem_ouro(nao), C is +5, !.
 
 % Get the first occurence of certain value
