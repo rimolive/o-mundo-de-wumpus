@@ -157,7 +157,7 @@ atirar(_, _) :-
     tem_flecha(nao),
     write('!: Nao tenho mais flechas.'), !.
 atirar(X, Y) :-
-    assertz(acaos(atirou)),
+    assertz(acoes(atirou)),
     tem_flecha(sim),
     assertz(atirou(X, Y)).
 
