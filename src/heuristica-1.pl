@@ -68,7 +68,7 @@ tem_wumpus(X, Y, talvez) :-
     \+ sem_fedor_em(X, S), !.
 tem_wumpus(_, _, nao).
 
-% Knaowledge database, add knaowledge where I found fedor and brisa
+% Agrega todo o conhecimento sobre Fedor e Brisa.
 agrega_conhecimento(brisa) :-
     cacador(X, Y, _),
     assertz(brisa_em(X, Y)).
@@ -86,7 +86,9 @@ agrega_conhecimento(sem_fedor) :-
 % Define heuristicas           %
 % ---------------------------- %
 
+% Caracteristicas da lista de sensores:
 % [Fedor, Brisa, Brilho, Parede, Grito]
+
 heuristica([_, _, _, _, _], exit) :-
     cacador(1, 1, _),
     tem_ouro(sim), !.
@@ -129,10 +131,10 @@ heuristica(_, [mover, X, Y]) :-
     melhor_caminho(X, Y), !.
 
 melhor_caminho(X, Y) :-
-  % Calcula o custo de cada vizinho
+    % Calcula o custo de cada vizinho
     findall(C, custo_vizinho(C), L),
     min_list(L, Min),
-  % Returns the position with less custo hence the safest
+    % Retorna o menor custo possivel
     index_of(L, Min, I),
     vizinhos(N),
     nth0(I, N, [X, Y]),
@@ -143,7 +145,7 @@ custo_vizinho(C) :-
     vizinhos(X, Y),
     soma_custo(X, Y, C).
 
-% custo predicates
+% Predicados de custo
 soma_custo(X, Y, C) :-
     findall(Ci, custo(X, Y, Ci), Cs),
     sum_list(Cs, C).
