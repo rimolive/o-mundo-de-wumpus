@@ -9,6 +9,7 @@
 :- abolish(loop/1).
 
 :- (dynamic[cacador/3, wumpus/2, buraco/2, ouro/2, pegar/2, acoes/1, atirou/2, visitado/2]).
+:- (multifile[mundo/2, heuristica/2]).
 
 % Posicao inicial do jogador
 cacador(1, 1, leste).
@@ -27,7 +28,7 @@ tem_flecha(nao) :-
 tem_flecha(sim).
 
 % Percepcoes
-% ===========
+% ==========
 % Se tem ouro, tem brilho
 tem_brilho(sim) :-
     tem_ouro(G),
@@ -109,6 +110,7 @@ nas_fronteiras(X, Y) :-
     Y>0,
     Y=<H.
 
+% Predicado de todos os sensores
 percepcoes([Fedor, Brisa, Brilho, Parede, Grito]) :-
     tem_fedor(Fedor),
     tem_brisa(Brisa),
@@ -120,7 +122,7 @@ percepcoes([Fedor, Brisa, Brilho, Parede, Grito]) :-
 mover(X, Y) :-
     assertz(acoes(move)),
     nas_fronteiras(X, Y),
-  % format("- Movendo-se para ~dx~d~n", [X, Y]),
+    format("- Movendo-se para ~dx~d~n", [X, Y]),
     direcao(X, Y, D),
     retractall(cacador(_, _, _)),
     asserta(cacador(X, Y, D)),
@@ -203,6 +205,7 @@ acao(exit) :-
 
 acao([mover, X, Y]) :-
     mover(X, Y).
+
 acao([atirar, X, Y]) :-
     atirar(X, Y).
 
@@ -217,13 +220,13 @@ acao(pegar) :-
     ;   true
     ).
 
-% A naive random move
+% Uma acao aleatoria
 acao(random) :-
     vizinhos(N),
     length(N, L),
     random_between(1, L, R),
     nth1(R, N, [X, Y]),
-    move(X, Y).
+    mover(X, Y).
 
 acao(noop).
 
@@ -246,7 +249,7 @@ passos(S) :-
     findall(A, acoes(A), As),
     length(As, S).
 
-% Print
+% Imprime
 imprime_resultado :-
     (   format('~n~tResult~t~40|~n'),
         placar(S),
@@ -281,22 +284,22 @@ imprime_mundo :-
     format('Buraco: ~`.t ~p~40|', [Ps]),
     nl.
 
-% Run the game
+% Executa o jogo com dados aleatorios
 run(random) :-
-    random_between(2, 5, X1),
-    random_between(2, 5, Y1),
+    random_between(1, 4, X1),
+    random_between(1, 4, Y1),
     assertz(ouro(X1, Y1)),
-    random_between(2, 5, X2),
-    random_between(2, 5, Y2),
+    random_between(1, 4, X2),
+    random_between(1, 4, Y2),
     assertz(wumpus(X2, Y2)),
-    random_between(2, 5, X3),
-    random_between(2, 5, Y3),
+    random_between(1, 4, X3),
+    random_between(1, 4, Y3),
     assertz(buraco(X3, Y3)),
-    random_between(2, 5, X4),
-    random_between(2, 5, Y4),
+    random_between(1, 4, X4),
+    random_between(1, 4, Y4),
     assertz(buraco(X4, Y4)),
-    random_between(2, 5, X5),
-    random_between(2, 5, Y5),
+    random_between(1, 4, X5),
+    random_between(1, 4, Y5),
     assertz(buraco(X5, Y5)),
     run.
 
@@ -315,6 +318,7 @@ runloop(100) :-
     write('!: Numero maximo de passos executado.'),
     nl,
     acao(exit), !.
+
 runloop(T) :-
     (   cacador(X, Y, D),
         percepcoes(P),
@@ -323,9 +327,8 @@ runloop(T) :-
         heuristica(P, A),
         format('Acao escolhida: ~p.~n', [A]),
         acao(A),
-  % Iterate
-        jogador_esta(morto)
-    ->  write('Voce morreu.'),
+        % Iteracao
+        jogador_esta(morto) ->  write('Voce morreu.'),
         nl,
         acao(exit), !
     ;   Ti is T+1,
