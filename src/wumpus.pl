@@ -235,7 +235,7 @@ acao([virar, D]) :-
             Di == leste, Dj=sul, retractall(cacador(_, _, _)), asserta(cacador(X, Y, Dj));
             Di == norte, Dj=leste, retractall(cacador(_, _, _)), asserta(cacador(X, Y, Dj));
             Di == oeste, Dj=norte, retractall(cacador(_, _, _)), asserta(cacador(X, Y, Dj));
-            Di == sul, Dj=leste, retractall(cacador(_, _, _)), asserta(cacador(X, Y, Dj))
+            Di == sul, Dj=oeste, retractall(cacador(_, _, _)), asserta(cacador(X, Y, Dj))
         )
     ), !.
 acao(adiante) :- 

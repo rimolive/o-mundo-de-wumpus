@@ -155,19 +155,26 @@ heuristica([_, sim, _, _, _], adiante) :-
     agrega_conhecimento(sem_fedor),
     agrega_conhecimento(brisa), !.
 
-heuristica([_, _, _, sim, _], [virar, direita]) :- !.
+heuristica([_, _, _, sim, _], [virar, direita]) :-
+    (
+        cacador(Xi, Yi, Di), Di==sul,   O is Xi-1, S is Yi-1, (nas_fronteiras(O, Yi); nas_fronteiras(Xi, S));
+        cacador(Xi, Yi, Di), Di==leste, S is Yi-1, L is Xi+1, (nas_fronteiras(Xi, S); nas_fronteiras(L, Yi));
+        cacador(Xi, Yi, Di), Di==norte, L is Xi+1, N is Yi+1, (nas_fronteiras(L, Yi); nas_fronteiras(Xi, N));
+        cacador(Xi, Yi, Di), Di==oeste, N is Yi+1, O is Xi-1, (nas_fronteiras(Xi, N); nas_fronteiras(O, Yi))
+    ), !.
 
-heuristica([_, _, _, sim, _], [virar, esquerda]) :- !.
+heuristica([_, _, _, sim, _], [virar, esquerda]) :- 
+        (
+            cacador(Xi, Yi, Di), Di==sul,   L is Xi+1, S is Yi-1, (nas_fronteiras(L, Yi); nas_fronteiras(Xi, S));
+            cacador(Xi, Yi, Di), Di==leste, N is Yi+1, L is Xi+1, (nas_fronteiras(Xi, N); nas_fronteiras(L, Yi));
+            cacador(Xi, Yi, Di), Di==norte, O is Xi-1, N is Yi+1, (nas_fronteiras(O, Yi); nas_fronteiras(Xi, N));
+            cacador(Xi, Yi, Di), Di==oeste, S is Yi-1, O is Xi-1, (nas_fronteiras(Xi, S); nas_fronteiras(O, Yi))
+        ), !.
 
 % Volta pro comeco
 heuristica(_, adiante) :-
     tem_ouro(sim),
     write('Voltando... '), !.
-
-heuristica(_, [virar, direita]) :-
-        tem_ouro(sim),
-        cacador(X, Y, _), 
-        write('Voltando... '), !.
 
 heuristica(_, exit) :-
     cacador(X, Y, _),
