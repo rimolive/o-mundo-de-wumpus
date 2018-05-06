@@ -120,7 +120,7 @@ percepcoes([Fedor, Brisa, Brilho, Parede, Grito]) :-
 
 % Move o jogador para uma posicao
 mover(X, Y) :-
-    assertz(acoes(move)),
+    assertz(acoes(mover)),
     nas_fronteiras(X, Y),
     format("- Movendo-se para ~dx~d~n", [X, Y]),
     direcao(X, Y, D),
@@ -220,6 +220,34 @@ acao(pegar) :-
     ;   true
     ).
 
+% Novas acoes para o jogador para essa heuristica
+acao([virar, D]) :- 
+    (
+        D == esquerda, assertz(acoes([virar, esquerda])), cacador(X, Y, Di), 
+        (
+            Di == leste, Dj=norte, retractall(cacador(_, _, _)), asserta(cacador(X, Y, Dj));
+            Di == norte, Dj=oeste, retractall(cacador(_, _, _)), asserta(cacador(X, Y, Dj));
+            Di == oeste, Dj=sul, retractall(cacador(_, _, _)), asserta(cacador(X, Y, Dj));
+            Di == sul, Dj=leste, retractall(cacador(_, _, _)), asserta(cacador(X, Y, Dj))
+        );
+        D == direita, assertz(acoes([virar, direita])), cacador(X, Y, Di), 
+        (
+            Di == leste, Dj=sul, retractall(cacador(_, _, _)), asserta(cacador(X, Y, Dj));
+            Di == norte, Dj=leste, retractall(cacador(_, _, _)), asserta(cacador(X, Y, Dj));
+            Di == oeste, Dj=norte, retractall(cacador(_, _, _)), asserta(cacador(X, Y, Dj));
+            Di == sul, Dj=leste, retractall(cacador(_, _, _)), asserta(cacador(X, Y, Dj))
+        )
+    ), !.
+acao(adiante) :- 
+    assertz(acoes(adiante)),
+    (
+        cacador(X, Y, D), nas_fronteiras(X, Y), D == leste, retractall(cacador(_, _, _)), L is X+1, asserta(cacador(L, Y, D));
+        cacador(X, Y, D), nas_fronteiras(X, Y), D == norte, retractall(cacador(_, _, _)), N is Y+1, asserta(cacador(X, N, D));
+        cacador(X, Y, D), nas_fronteiras(X, Y), D == oeste, retractall(cacador(_, _, _)), O is X-1, asserta(cacador(O, Y, D));
+        cacador(X, Y, D), nas_fronteiras(X, Y), D == sul, retractall(cacador(_, _, _)), S is Y-1, asserta(cacador(X, S, D))
+    ),
+    assertz(visitado(X, Y)), !.
+
 % Uma acao aleatoria
 acao(random) :-
     vizinhos(N),
@@ -286,20 +314,20 @@ imprime_mundo :-
 
 % Executa o jogo com dados aleatorios
 run(random) :-
-    random_between(1, 4, X1),
-    random_between(1, 4, Y1),
+    random_between(2, 4, X1),
+    random_between(2, 4, Y1),
     assertz(ouro(X1, Y1)),
-    random_between(1, 4, X2),
-    random_between(1, 4, Y2),
+    random_between(2, 4, X2),
+    random_between(2, 4, Y2),
     assertz(wumpus(X2, Y2)),
-    random_between(1, 4, X3),
-    random_between(1, 4, Y3),
+    random_between(2, 4, X3),
+    random_between(2, 4, Y3),
     assertz(buraco(X3, Y3)),
-    random_between(1, 4, X4),
-    random_between(1, 4, Y4),
+    random_between(2, 4, X4),
+    random_between(2, 4, Y4),
     assertz(buraco(X4, Y4)),
-    random_between(1, 4, X5),
-    random_between(1, 4, Y5),
+    random_between(2, 4, X5),
+    random_between(2, 4, Y5),
     assertz(buraco(X5, Y5)),
     run.
 
